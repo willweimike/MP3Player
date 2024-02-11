@@ -58,15 +58,19 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
+        playBtn.setDisable(true);
+        pauseBtn.setDisable(true);
+        resetBtn.setDisable(true);
+        backBtn.setDisable(true);
+        forwardBtn.setDisable(true);
+        for (int i = 0; i < speeds.length; i++) {
+            speedBox.getItems().add(Integer.toString(speeds[i]) + "%");
+        }
     }
 
     @FXML
     private void openFileMethod(ActionEvent actionEvent) {
 
-        for (int i = 0; i < speeds.length; i++) {
-            speedBox.getItems().add(Integer.toString(speeds[i]) + "%");
-        }
         speedBox.setOnAction(this::changeSpeed);
         volSlider.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
@@ -79,27 +83,35 @@ public class Controller implements Initializable {
 //        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Select a .mp4 file", ".mp4");
 //        fileChooser.getExtensionFilters().add(filter);
         File file = fileChooser.showOpenDialog(null);
+        if (file != null) {
+            path = file.toURI().toString();
 
-        path = file.toURI().toString();
-
-        if (path != null) {
-            Media media = new Media(path);
-            mediaPlayer = new MediaPlayer(media);
-            int index = path.lastIndexOf("/");
-            songLabel.setText(path.substring(index + 1));
+            if (path != null) {
+                Media media = new Media(path);
+                mediaPlayer = new MediaPlayer(media);
+                int index = path.lastIndexOf("/");
+                songLabel.setText(path.substring(index + 1));
 
 
-            volSlider.setValue(mediaPlayer.getVolume() * 100);
-            volSlider.valueProperty().addListener(new InvalidationListener() {
-                @Override
-                public void invalidated(Observable observable) {
-                    mediaPlayer.setVolume(volSlider.getValue() / 100);
-                }
-            });
+                volSlider.setValue(mediaPlayer.getVolume() * 100);
+                volSlider.valueProperty().addListener(new InvalidationListener() {
+                    @Override
+                    public void invalidated(Observable observable) {
+                        mediaPlayer.setVolume(volSlider.getValue() / 100);
+                    }
+                });
+            }
+            playBtn.setDisable(false);
+            pauseBtn.setDisable(false);
+            resetBtn.setDisable(false);
+            backBtn.setDisable(false);
+            forwardBtn.setDisable(false);
         }
-        playBtn.setDisable(false);
-        pauseBtn.setDisable(false);
-        resetBtn.setDisable(false);
+        else {
+            System.out.println("no file");
+        }
+
+
     }
 
 
